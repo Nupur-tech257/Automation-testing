@@ -9,12 +9,12 @@ engine = create_engine(DATABASE_URL)
 
 st.set_page_config(page_title="SQL Data Viewer", layout="wide")
 
-st.title("📊 SQL Data Viewer")
+st.title(" SQL Data Viewer")
 
 query = "SELECT * FROM users"
 df = pd.read_sql(query, engine)
 
-st.write("### User Data from Database")
+st.write("# User Data from Database")
 st.dataframe(df, use_container_width=True)
 
 # Sidebar Filters
@@ -23,5 +23,5 @@ name_filter = st.sidebar.text_input("Search by Name")
 
 if name_filter:
     filtered_df = df[df["name"].str.contains(name_filter, case=False)]
-    st.write("# Data")
+    st.write("#  Data")
     st.dataframe(filtered_df, use_container_width=True)
