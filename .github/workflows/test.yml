@@ -44,7 +44,7 @@ jobs:
       # Build and start app services
       - name: Start app with docker-compose
         run: |
-          docker-compose up -d --build
+          docker compose up -d --build
           sleep 20  # wait for db + streamlit app to be ready
 
       # Run Playwright tests from test image
