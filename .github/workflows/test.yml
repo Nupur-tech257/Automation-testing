@@ -28,17 +28,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-            # Build test image
+      # Build test image
       - name: Build test image
         run: |
           REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          docker build -t ghcr.io/$REPO/streamlit-tests:pr-${{ github.event.number }} -f Dockerfile.tests .
+          docker build -t ghcr.io/$REPO/streamlit-tests:pr-${{ github.event.number }} -f Dockerfile.test .
 
       # Push test image to GHCR
       - name: Push test image
         run: |
           REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           docker push ghcr.io/$REPO/streamlit-tests:pr-${{ github.event.number }}
+
 
 
       # Build and start app services
