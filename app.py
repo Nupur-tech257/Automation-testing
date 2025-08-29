@@ -23,5 +23,5 @@ name_filter = st.sidebar.text_input("Search by Name")
 
 if name_filter:
     filtered_df = df[df["name"].str.contains(name_filter, case=False)]
-    st.write("### Filtered Data")
+    st.write("# Filtered Data")
     st.dataframe(filtered_df, use_container_width=True)
