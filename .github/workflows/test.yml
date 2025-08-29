@@ -1,22 +1,57 @@
-name: Run Tests
+name: PR CI - Streamlit App Tests
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "app.py"   # trigger workflow only if app.py changes
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      packages: write
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      # Login to GHCR
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
         with:
-          python-version: '3.10'
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+      # Build test image
+      - name: Build test image
+        run: |
+          docker build -t ghcr.io/${{ github.repository }}/streamlit-tests:pr-${{ github.event.pull_request.number }} -f Dockerfile.test .
 
+      # Push test image to GHCR
+      - name: Push test image
+        run: |
+          docker push ghcr.io/${{ github.repository }}/streamlit-tests:pr-${{ github.event.pull_request.number }}
+
+      # Build and start app services
+      - name: Start app with docker-compose
+        run: |
+          docker-compose up -d --build
+          sleep 20  # wait for db + streamlit app to be ready
+
+      # Run Playwright tests from test image
       - name: Run tests
-        run: pytest -v test.py
+        run: |
+          docker run --network=automation-testing_default \
+            ghcr.io/${{ github.repository }}/streamlit-tests:pr-${{ github.event.pull_request.number }}
+
+      # Shutdown containers
+      - name: Stop services
+        if: always()
+        run: docker-compose down
+
