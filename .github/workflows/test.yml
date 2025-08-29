@@ -46,14 +46,15 @@ jobs:
           docker compose up -d --build
           sleep 20  # wait for db + streamlit app to be ready
 
-      # Run Playwright tests from test image
-      - name: Run tests
+      - name: Run tests container
         run: |
+          REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           docker run --network=automation-testing_default \
-            ghcr.io/${{ github.repository }}/streamlit-tests:pr-${{ github.event.pull_request.number }}
+          ghcr.io/$REPO/streamlit-tests:pr-${{ github.event.number || github.sha }}
+
 
       # Shutdown containers
       - name: Stop services
         if: always()
-        run: docker-compose down
+        run: docker compose down
 
