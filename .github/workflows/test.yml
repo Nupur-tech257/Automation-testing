@@ -31,12 +31,15 @@ jobs:
       # Build test image
       - name: Build test image
         run: |
-          docker build -t ghcr.io/${{ github.repository }}/streamlit-tests:pr-${{ github.event.pull_request.number }} -f Dockerfile.test .
+          REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          docker build -t ghcr.io/$REPO/streamlit-tests:pr-${{ github.event.number }} -f Dockerfile.test .
 
       # Push test image to GHCR
       - name: Push test image
         run: |
-          docker push ghcr.io/${{ github.repository }}/streamlit-tests:pr-${{ github.event.pull_request.number }}
+          REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          docker push ghcr.io/$REPO/streamlit-tests:pr-${{ github.event.number }}
+
 
       # Build and start app services
       - name: Start app with docker-compose
