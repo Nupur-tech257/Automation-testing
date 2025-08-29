@@ -40,8 +40,6 @@ jobs:
           REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           docker push ghcr.io/$REPO/streamlit-tests:pr-${{ github.event.number }}
 
-
-
       # Build and start app services
       - name: Start app with docker-compose
         run: |
