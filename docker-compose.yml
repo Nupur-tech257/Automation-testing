@@ -20,18 +20,11 @@ services:
 
   app:
     build: .
-    command: 
-    - sh
-    - -c
-    - >
-      until nc -z db 3306; do echo "⏳ waiting for db..."; sleep 2; done;
-      python migrations/run_migrations.py &&
-      streamlit run app.py --server.port=8501 --server.address=0.0.0.0
     container_name: streamlit-app
     depends_on:
         - db
     ports:
-      - "8501:8501"
+      - "8500:8501"
     environment:
       DATABASE_URL: "mysql+pymysql://testuser:testpass@db:3306/testdb"
 

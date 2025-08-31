@@ -8,19 +8,11 @@ on:
       - "app.py"   # trigger workflow only if app.py changes
 
 jobs:
-  test:
+  tests:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
-
     steps:
-      # Checkout code
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # Login to GHCR
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
@@ -28,29 +20,25 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Build test image
-      - name: Build test image
+      - name: Set image name
         run: |
           REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          docker build -t ghcr.io/$REPO/streamlit-tests:pr-${{ github.event.number }} -f Dockerfile.test .
+          echo "IMAGE=ghcr.io/$REPO/streamlit-tests:${{ github.sha }}" >> $GITHUB_ENV
 
-      # Push test image to GHCR
-      - name: Push test image
+      - name: Build and push test image
         run: |
-          REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          docker push ghcr.io/$REPO/streamlit-tests:pr-${{ github.event.number }}
+          docker build -t $IMAGE -f Dockerfile.test .
+          docker push $IMAGE
 
-      # Build and start app services
-      - name: Start app with docker-compose
+      - name: Run services
         run: |
           docker compose up -d --build
-          sleep 20  # wait for db + streamlit app to be ready
+          sleep 20
 
-      # Run Playwright tests from test image
-      - name: Run tests
+      - name: Run tests inside test container
         run: |
-          docker run --network=automation-testing_default \
-            ghcr.io/${{ github.repository }}/streamlit-tests:pr-${{ github.event.pull_request.number }}
+          docker run --network=automation-testing_default $IMAGE
+
 
       # Shutdown containers
       - name: Stop services
