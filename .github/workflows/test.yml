@@ -35,13 +35,16 @@ jobs:
           docker compose up -d --build
           sleep 20
 
+
       - name: Run tests inside test container
         run: |
           docker run --network=automation-testing_default $IMAGE
+
+     
 
 
       # Shutdown containers
       - name: Stop services
         if: always()
-        run: docker-compose down
+        run: docker compose down
 
