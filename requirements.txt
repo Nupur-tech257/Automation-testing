@@ -1,6 +1,6 @@
 streamlit
-sqlalchemy
 pymysql
 pandas
 cryptography
+mysql-connector-python
 

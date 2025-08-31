@@ -8,27 +8,34 @@ on:
       - "app.py"   # trigger workflow only if app.py changes
 
 jobs:
-  tests:
+  build-and-push:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Log in to GHCR
+    permissions:
+      contents: read
+      packages: write   # ✅ required to push to GHCR
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set image name
+      - name: Build Docker image
         run: |
-          REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          echo "IMAGE=ghcr.io/$REPO/streamlit-tests:${{ github.sha }}" >> $GITHUB_ENV
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/streamlit-tests:latest
+          echo "Using image: $IMAGE_NAME"
+          docker build -t $IMAGE_NAME .
 
-      - name: Build and push test image
+      - name: Push Docker image
         run: |
-          docker build -t $IMAGE -f Dockerfile.test .
-          docker push $IMAGE
+          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/streamlit-tests:latest
+          docker push $IMAGE_NAME
 
       - name: Run services
         run: |
@@ -38,7 +45,7 @@ jobs:
 
       - name: Run tests inside test container
         run: |
-          docker run --network=automation-testing_default $IMAGE
+          docker run --network=automation-testing_default $IMAGE_NAME
 
      
 
