@@ -17,6 +17,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-#CMD ["sh", "-c", "until nc -z db 3306; do echo '⏳ waiting for db...'; sleep 2; done && python migrations/run_migrations.py && streamlit run app.py --server.port=8501 --server.address=0.0.0.0"]
+CMD ["sh", "-c", "until nc -z db 3306; do echo '⏳ waiting for db...'; sleep 2; done && python migrations/run_migrations.py && streamlit run app.py --server.port=8501 --server.address=0.0.0.0"]
 
 

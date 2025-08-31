@@ -14,7 +14,7 @@ st.title(" SQL Data Viewer")
 query = "SELECT * FROM users"
 df = pd.read_sql(query, engine)
 
-st.write("## User Data from Database")
+st.write("User Data from Database")
 st.dataframe(df, use_container_width=True)
 
 # Sidebar Filters
