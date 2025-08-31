@@ -26,17 +26,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker image
+       - name: Build Docker image
         run: |
           OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           IMAGE_NAME=ghcr.io/$OWNER_LC/streamlit-tests:latest
           echo "Using image: $IMAGE_NAME"
           docker build -t $IMAGE_NAME .
+          # persist variable for next steps
+          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
 
       - name: Push Docker image
         run: |
-          OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-          IMAGE_NAME=ghcr.io/$OWNER_LC/streamlit-tests:latest
           docker push $IMAGE_NAME
 
       - name: Run services
@@ -45,7 +45,7 @@ jobs:
           sleep 20
 
 
-      - name: Run tests inside test container
+      - name: Run container for testing
         run: |
           docker run --network=automation-testing_default $IMAGE_NAME
 
