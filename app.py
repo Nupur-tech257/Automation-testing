@@ -1,20 +1,17 @@
 import os
 import streamlit as st
 import pandas as pd
-from sqlalchemy import create_engine
+import mysql.connector as conn
 
-DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://testuser:testpass@db:3306/testdb")
-
-engine = create_engine(DATABASE_URL)
-
-st.set_page_config(page_title="SQL Data Viewer", layout="wide")
+mydb=conn.connect(host="db",user="testuser",password="testpass")
+cursor=mydb.cursor()
 
 st.title(" SQL Data Viewer")
-
+cursor.execute('use testdb')
 query = "SELECT * FROM users"
-df = pd.read_sql(query, engine)
+df = pd.read_sql(query,mydb)
 
-st.write("User Data from Database")
+st.write("User Data ")
 st.dataframe(df, use_container_width=True)
 
 # Sidebar Filters
