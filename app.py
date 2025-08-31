@@ -15,7 +15,7 @@ st.write("User Data ")
 st.dataframe(df, use_container_width=True)
 
 # Sidebar Filters
-st.sidebar.header("Filter")
+st.sidebar.header("Filters")
 name_filter = st.sidebar.text_input("Search by Name")
 
 if name_filter:

@@ -47,7 +47,7 @@ jobs:
 
       - name: Run container for testing
         run: |
-          docker run --network=automation-testing_default $IMAGE_NAME
+          docker run --network=automation-testing_default -e BASE_URL=http://app:8501 $IMAGE_NAME
 
      
 
