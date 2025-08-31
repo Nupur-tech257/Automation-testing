@@ -1,7 +1,8 @@
 import pytest
 from playwright.sync_api import sync_playwright
+import os 
 
-BASE_URL = "http://localhost:8501"
+BASE_URL = os.getenv("BASE_URL", "http://localhost:8501")
 
 def test_sql_data_viewer_heading():
     with sync_playwright() as p:
