@@ -1,4 +1,4 @@
-name: PR CI - Streamlit App Tests
+name: Streamlit App Tests
 
 on:
   workflow_dispatch:
