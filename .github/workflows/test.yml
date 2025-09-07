@@ -1,7 +1,8 @@
 name: PR CI - Streamlit App Tests
 
 on:
-  pull request:
+  workflow dispatch:
+  pull_request:
     branches:
       - main
     paths:
