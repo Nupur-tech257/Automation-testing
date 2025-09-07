@@ -3,4 +3,7 @@ pymysql
 pandas
 cryptography
 mysql-connector-python
+playwright
+pytest
+
 

@@ -1,16 +1,20 @@
 # Use official Playwright image with browsers installed
-FROM mcr.microsoft.com/playwright/python:v1.47.0-focal
+FROM mcr.microsoft.com/playwright/python:v1.48.0-focal
 
 WORKDIR /usr/src/app
 
-# Copy only test dependencies
-COPY requirements.txt requirements.txt
+# Copy dependencies first
+COPY requirements.txt .
 
-# Install project + test deps
+# Install deps
 RUN pip install --no-cache-dir -r requirements.txt pytest
 
-# Copy test files
-COPY tests/ tests/
+# Copy the whole project (includes app.py, tests/, migrations/, etc.)
+COPY . .
 
-# Default command: run pytest
+# Just to debug – list files inside image
+RUN ls -R /usr/src/app
+
+# Default command: run pytest on tests/
 CMD ["pytest", "-v", "tests/"]
+

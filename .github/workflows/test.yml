@@ -1,4 +1,4 @@
-name: PR CI - Streamlit App Tests
+name: Streamlit App Tests
 
 on:
   workflow_dispatch:
@@ -32,7 +32,7 @@ jobs:
           OWNER_LC=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           IMAGE_NAME=ghcr.io/$OWNER_LC/streamlit-tests:latest
           echo "Using image: $IMAGE_NAME"
-          docker build -t $IMAGE_NAME .
+          docker build -t $IMAGE_NAME -f Dockerfile.test .
           # persist variable for next steps
           echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
 
@@ -48,7 +48,7 @@ jobs:
 
       - name: Run container for testing
         run: |
-          docker run --network=automation-testing_default -e BASE_URL=http://app:8501 $IMAGE_NAME
+          docker run --network=automation-testing_default -e BASE_URL=http://app:8500 $IMAGE_NAME
 
      
 

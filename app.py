@@ -6,7 +6,7 @@ import mysql.connector as conn
 mydb=conn.connect(host="db",user="testuser",password="testpass")
 cursor=mydb.cursor()
 
-st.title(" SQL Data Viewer")
+st.title("# SQL Data Viewer")
 cursor.execute('use testdb')
 query = "SELECT * FROM users"
 df = pd.read_sql(query,mydb)
